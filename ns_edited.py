@@ -133,7 +133,7 @@ def F2(variables_dict, physical_parameters_dict):
     #     - fe.inner( Coeff1_Bou_NS , test_1[1] ) * fe.dx
     #     - fe.inner( Coeff2_Bou_NS , test_1[1] ) * fe.dx
 
-    # )
+    # ) # Penalization term added
 
     F2 = (
     fe.inner((u_answer - u_prev) / dt, test_1) * fe.dx
@@ -142,7 +142,8 @@ def F2(variables_dict, physical_parameters_dict):
     - fe.inner( Coeff1_Bou_NS , test_1[1] ) * fe.dx
     - fe.inner( Coeff2_Bou_NS , test_1[1] ) * fe.dx
 
-    )
+    ) # with viscosity depending on phi
+    
     return F2
 
 def define_boundary_condition_ns(variables_dict, physical_parameters_dict) :

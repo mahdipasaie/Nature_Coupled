@@ -141,6 +141,11 @@ def calculate_equation_1(variables_dict_pf, dependent_var_dict, physical_paramet
     d_w_n_y = dependent_var_dict['D_w_n_y']
     mgphi = dependent_var_dict['mgphi']
     w_n = dependent_var_dict['W_n']
+    scaling_velocity = physical_parameters_dict['scaling_velocity']
+
+    ##########remember to change this : 
+
+    vel_answer = scaling_velocity* vel_answer
 
 
     term4_in = mgphi * w_n * d_w_n_x
@@ -187,6 +192,11 @@ def calculate_equation_2(variables_dict_pf, physical_parameters_dict, dependent_
     lamda = physical_parameters_dict['lamda'](a1)
     a2 = physical_parameters_dict['a2']
     D = physical_parameters_dict['D'](a2, lamda)
+    scaling_velocity = physical_parameters_dict['scaling_velocity']
+
+    ##########remember to change this : 
+
+    vel_answer = scaling_velocity* vel_answer
 
     ########################################
     tolerance_d = fe.sqrt(fe.DOLFIN_EPS)  

@@ -37,7 +37,7 @@ def refine_mesh_local(mesh, rad, center, max_level):
 
 physical_parameters_dict = {
     "dy": 0.6 ,
-    "max_level": 3,
+    "max_level": 1,
     "Nx": 200,
     "Ny": 200,
     "dt": 5E-2,
@@ -49,8 +49,8 @@ physical_parameters_dict = {
     "w0": 1,
     "tau_0": 1,
     "d0": lambda w0: w0 * 0.139,# check!
-    "W0_scale":  3.57* 10**-9,#25.888e-8,
-    "tau_0_scale":  2.24*10**-8,#1.6381419166815996e-6,
+    "W0_scale":  35.7E-8, #25.888e-8,
+    "tau_0_scale": 2.925E-4, #2.24*10**-8,#1.6381419166815996e-6,
     "ep_4": 0.05,
     "k_eq": 0.14,
     "lamda": lambda a1: 6.383, 
@@ -62,15 +62,16 @@ physical_parameters_dict = {
     "u_initial": -0.2, 
     "initial_seed_radius": 8.2663782447466,
     ####################### Navier-Stokes Parameters ####################
-    "gravity": lambda tau_0_scale, W0_scale: -10 * 10 * (tau_0_scale**2) / (W0_scale )  , #gravity 100
+    "gravity": lambda tau_0_scale, W0_scale: -10  * (tau_0_scale**2) / (W0_scale )  , #gravity 10
     "rho_liquid": 2.45* 1E3, # Kg/m^3 * W0_scale**-3
-    "rho_solid": 2.7* 1E3 , # Kg/m^3s * W0_scale**-3 already scaled incorporated in mu_fluid
+    "rho_solid": 2.7* 1E3, # Kg/m^3s * W0_scale**-3 already scaled incorporated in mu_fluid
     "mu_fluid": lambda tau_0_scale, W0_scale: 5E-7 * (tau_0_scale) / (W0_scale ** 2), # scaled here coeff just correct for dynamic (14E-4 Pa.s)
     "alpha_c": 9.2e-3,
-    "viscosity_solid": lambda mu_fluid: mu_fluid *1E3 , # 1E3 changed to 1E6
+    "viscosity_solid": lambda mu_fluid: mu_fluid* 1E6 , # 1E3 changed to 1E6
     "viscosity_liquid": lambda mu_fluid: mu_fluid,
     "lid_vel_x": 0.0, 
     "lid_vel_y": 0.0,
+    "scaling_velocity": 1,#1E5, # scale the velocity field for PF to see faster results
     ###################### SOLVER PARAMETERS ######################
     "abs_tol_pf": 1E-6,  
     "rel_tol_pf": 1E-5,  
@@ -93,7 +94,7 @@ physical_parameters_dict = {
 
 
 
-
+scaling_velocity = physical_parameters_dict['scaling_velocity']
 ##################################### Defining the mesh ###############################
 dy = physical_parameters_dict["dy"]
 dt = physical_parameters_dict["dt"]
@@ -183,7 +184,7 @@ def update_time_step(physical_parameters_dict, solver_pf_information, solver_ns_
     return dt
 
 # Usage Example:
-file = fe.XDMFFile( "Test8.xdmf" )
+file = fe.XDMFFile( "Test12.xdmf" )
 
 
 ##############################################################
