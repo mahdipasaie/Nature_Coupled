@@ -156,6 +156,10 @@ def define_boundary_condition_ns(variables_dict, physical_parameters_dict) :
     lid_vel_x = physical_parameters_dict['lid_vel_x']
     lid_vel_y = physical_parameters_dict['lid_vel_y']
     W = variables_dict['function_space_ns']
+    seed_center = physical_parameters_dict["seed_center"]
+    XC = seed_center[0]
+    YC = seed_center[1]
+
 
     # Define the Domain boundaries based on the previous setup
     (X0, Y0), (X1, Y1) = Domain
@@ -191,7 +195,7 @@ def define_boundary_condition_ns(variables_dict, physical_parameters_dict) :
     bc_p_bottom = fe.DirichletBC(W.sub(1), fe.Constant(0.0), bottom_boundary)
 
     # Point for setting pressure
-    zero_pressure_point = fe.Point( (X0)/2,  (Y1)/2 )
+    zero_pressure_point = fe.Point( XC,  YC )
     bc_p_zero = fe.DirichletBC(W.sub(1), fe.Constant(0.0), lambda x, on_boundary: fe.near(x[0], zero_pressure_point.x()) and fe.near(x[1], zero_pressure_point.y()), method="pointwise")
     # Combine all boundary conditions
 

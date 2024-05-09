@@ -26,7 +26,7 @@ def refine_mesh_local(mesh, rad, center, max_level):
         mf = fe.MeshFunction("bool", mesh_itr, mesh_itr.topology().dim(), False)
         for cell in fe.cells(mesh_itr):
             x, y, *_ = cell.midpoint().array()  # Get cell midpoint coordinates
-            if (x - xc)**2 + (y - yc)**2 < 2 * rad**2:
+            if (x - xc)**2 + (y - yc)**2 < 10 * rad**2:
                 mf[cell] = True  # Mark cell for refinement
 
         mesh_itr = fe.refine(mesh_itr, mf)  # Refine the mesh
@@ -37,13 +37,13 @@ def refine_mesh_local(mesh, rad, center, max_level):
 
 physical_parameters_dict = {
     "dy": 0.6 ,
-    "max_level": 1,
-    "Nx": 200,
-    "Ny": 200,
+    "max_level": 2,
+    "Nx": 150,
+    "Ny": 150,
     "dt": 5E-2,
     "dy_coarse":lambda max_level, dy: 2**max_level * dy,
     "Domain": lambda Nx, Ny: [(0.0, 0.0), (Nx, Ny)],
-    "seed_center": [200/2, 170],
+    # "seed_center": [200/2, 170],
     "a1": 0.8839,
     "a2": 0.6637,
     "w0": 1,
@@ -86,9 +86,9 @@ physical_parameters_dict = {
     "preconditioner_pf": 'ilu',       # 'hypre_amg', 'ilu', 'jacobi'
     'maximum_iterations_pf': 50,
     ####################### Rfinement Parameters ####################
-    "precentile_threshold_of_high_gradient_velocities": 98,
-    "precentile_threshold_of_high_gradient_pressures": 98,
-    "precentile_threshold_of_high_gradient_U": 98,
+    "precentile_threshold_of_high_gradient_velocities": 50,
+    "precentile_threshold_of_high_gradient_pressures": 50,
+    "precentile_threshold_of_high_gradient_U": 50,
     "interface_threshold_gradient": 0.0001,
 }
 
@@ -99,10 +99,11 @@ scaling_velocity = physical_parameters_dict['scaling_velocity']
 dy = physical_parameters_dict["dy"]
 dt = physical_parameters_dict["dt"]
 initial_seed_radius = physical_parameters_dict["initial_seed_radius"]
-seed_center = physical_parameters_dict["seed_center"]
 max_level= physical_parameters_dict["max_level"]
 Nx = physical_parameters_dict["Nx"]
 Ny= physical_parameters_dict["Ny"]
+physical_parameters_dict["seed_center"] = [Nx/2, Ny/10 * 8]
+seed_center = physical_parameters_dict["seed_center"]
 # Calculated values
 dy_coarse = physical_parameters_dict["dy_coarse"](max_level, dy)
 Domain = physical_parameters_dict["Domain"](Nx, Ny)
@@ -184,7 +185,7 @@ def update_time_step(physical_parameters_dict, solver_pf_information, solver_ns_
     return dt
 
 # Usage Example:
-file = fe.XDMFFile( "Test12.xdmf" )
+file = fe.XDMFFile( "Test13_domain_test.xdmf" )
 
 
 ##############################################################
@@ -320,7 +321,7 @@ for it in tqdm( range(0, 10000000) ):
 
 
     ####### write first solution to file ########
-    if it % 20 == 0: 
+    if it % 10 == 0: 
         solution_vectors = [solution_vector_ns_0, solution_vector_pf_0]
         times = [T, T]  # Assuming T_ns and T_pf are defined times for NS and PF solutions
         variable_names_list = [["Vel", "Press"], ["Phi", "U"]]  # Adjust variable names as needed
