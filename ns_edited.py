@@ -117,7 +117,9 @@ def F2(variables_dict, physical_parameters_dict):
     Coeff1_Bou_NS = SN * alpha_c * gravity * (conctreation - c_initial)
     Coeff2_Bou_NS = SP * (rho_solid - rho_liquid) / rho_liquid * gravity
     ##########
-    dy_mu_article = ( viscosity_solid/ rho_solid )* (1 + phi)/2 + ( viscosity_liquid/rho_liquid ) * (1 - phi)/2 # depends on range of Phi
+    # dy_mu_article = ( viscosity_solid/ rho_solid )* (1 + phi)/2 + ( viscosity_liquid/rho_liquid ) * (1 - phi)/2 # depends on range of Phi
+    dy_mu_article = ( viscosity_solid )* (1 + phi)/2 + ( viscosity_liquid ) * (1 - phi)/2 # depends on range of Phi
+
     dy_mu = viscosity_liquid/rho_liquid ########## changed 
     beta = 1E12  # Large penalization parameter
     # penalization_term = beta *  (1 + phi)/2   * u_answer

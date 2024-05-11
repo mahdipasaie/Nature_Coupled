@@ -37,9 +37,9 @@ def refine_mesh_local(mesh, rad, center, max_level):
 
 physical_parameters_dict = {
     "dy": 0.6 ,
-    "max_level": 2,
-    "Nx": 150,
-    "Ny": 150,
+    "max_level": 5,
+    "Nx": 400,
+    "Ny": 700,
     "dt": 5E-2,
     "dy_coarse":lambda max_level, dy: 2**max_level * dy,
     "Domain": lambda Nx, Ny: [(0.0, 0.0), (Nx, Ny)],
@@ -86,9 +86,9 @@ physical_parameters_dict = {
     "preconditioner_pf": 'ilu',       # 'hypre_amg', 'ilu', 'jacobi'
     'maximum_iterations_pf': 50,
     ####################### Rfinement Parameters ####################
-    "precentile_threshold_of_high_gradient_velocities": 50,
-    "precentile_threshold_of_high_gradient_pressures": 50,
-    "precentile_threshold_of_high_gradient_U": 50,
+    "precentile_threshold_of_high_gradient_velocities": 90,
+    "precentile_threshold_of_high_gradient_pressures": 90,
+    "precentile_threshold_of_high_gradient_U": 90,
     "interface_threshold_gradient": 0.0001,
 }
 
@@ -185,7 +185,7 @@ def update_time_step(physical_parameters_dict, solver_pf_information, solver_ns_
     return dt
 
 # Usage Example:
-file = fe.XDMFFile( "Test13_domain_test.xdmf" )
+file = fe.XDMFFile( "Test_level5.xdmf" )
 
 
 ##############################################################
