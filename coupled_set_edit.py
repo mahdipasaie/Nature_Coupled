@@ -26,7 +26,7 @@ def refine_mesh_local(mesh, rad, center, max_level):
         mf = fe.MeshFunction("bool", mesh_itr, mesh_itr.topology().dim(), False)
         for cell in fe.cells(mesh_itr):
             x, y, *_ = cell.midpoint().array()  # Get cell midpoint coordinates
-            if (x - xc)**2 + (y - yc)**2 < 10 * rad**2:
+            if (x - xc)**2 + (y - yc)**2 < 2 * rad**2:
                 mf[cell] = True  # Mark cell for refinement
 
         mesh_itr = fe.refine(mesh_itr, mf)  # Refine the mesh
@@ -37,9 +37,9 @@ def refine_mesh_local(mesh, rad, center, max_level):
 
 physical_parameters_dict = {
     "dy": 0.6 ,
-    "max_level": 5,
-    "Nx": 400,
-    "Ny": 700,
+    "max_level": 8,
+    "Nx": 4000,
+    "Ny": 7000,
     "dt": 5E-2,
     "dy_coarse":lambda max_level, dy: 2**max_level * dy,
     "Domain": lambda Nx, Ny: [(0.0, 0.0), (Nx, Ny)],
@@ -60,7 +60,7 @@ physical_parameters_dict = {
     "omk": lambda k_eq: 1 - k_eq,
     "c_initial": 4, 
     "u_initial": -0.2, 
-    "initial_seed_radius": 8.2663782447466,
+    "initial_seed_radius": 8.2663782447466*2,
     ####################### Navier-Stokes Parameters ####################
     "gravity": lambda tau_0_scale, W0_scale: -10  * (tau_0_scale**2) / (W0_scale )  , #gravity 10
     "rho_liquid": 2.45* 1E3, # Kg/m^3 * W0_scale**-3
@@ -112,9 +112,15 @@ nx = (int)(Nx/ dy )
 ny = (int)(Ny / dy ) 
 nx_coarse = (int)(Nx/ dy_coarse ) 
 ny_coarse = (int)(Ny / dy_coarse ) 
+
+dy_coarse_init = 2**(max_level- 2 )  * dy # change this for the initial mesh
+nx_coarse_init = (int)(Nx/ dy_coarse_init ) 
+ny_coarse_init = (int)(Ny / dy_coarse_init ) 
+
 coarse_mesh = fe.RectangleMesh( fe.Point(0.0 , 0.0 ), fe.Point(Nx, Ny), nx_coarse, ny_coarse  )
+coarse_mesh_init = fe.RectangleMesh( fe.Point(0.0 , 0.0 ), fe.Point(Nx, Ny), nx_coarse_init, ny_coarse_init  )
 Domain = [ (0.0, 0.0 ) , ( Nx, Ny ) ]
-mesh = refine_mesh_local(coarse_mesh , initial_seed_radius , seed_center , max_level)
+mesh = refine_mesh_local(coarse_mesh_init , initial_seed_radius , seed_center , max_level)
 #############################  END  ################################
 
 def write_simulation_data_to_single_file(solution_vectors, times, file, variable_names_list, extra_funcs_dict):
@@ -185,7 +191,7 @@ def update_time_step(physical_parameters_dict, solver_pf_information, solver_ns_
     return dt
 
 # Usage Example:
-file = fe.XDMFFile( "Test_level5.xdmf" )
+file = fe.XDMFFile( "Test_level5_3.xdmf" )
 
 
 ##############################################################
@@ -261,7 +267,7 @@ for it in tqdm( range(0, 10000000) ):
 
 
 
-    if it == 20 or it % 30 == 25 :
+    if it == 5 or it % 30 == 25 :
         # refining the mesh
         mesh, mesh_info = refine_mesh(physical_parameters_dict, coarse_mesh, solution_vector_pf, spaces_pf, solution_vector_ns, space_ns, comm )
 
